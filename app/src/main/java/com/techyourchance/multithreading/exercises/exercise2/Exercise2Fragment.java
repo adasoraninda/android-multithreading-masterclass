@@ -5,15 +5,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 import com.techyourchance.multithreading.R;
 import com.techyourchance.multithreading.common.BaseFragment;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
-import androidx.fragment.app.Fragment;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Exercise2Fragment extends BaseFragment {
 
@@ -22,6 +22,8 @@ public class Exercise2Fragment extends BaseFragment {
     }
 
     private byte[] mDummyData;
+
+    private final AtomicBoolean isNotInterrupt = new AtomicBoolean(true);
 
     @Nullable
     @Override
@@ -39,6 +41,7 @@ public class Exercise2Fragment extends BaseFragment {
     @Override
     public void onStop() {
         super.onStop();
+        isNotInterrupt.set(false);
     }
 
     @Override
@@ -47,11 +50,13 @@ public class Exercise2Fragment extends BaseFragment {
     }
 
     private void countScreenTime() {
+        isNotInterrupt.set(true);
+
         new Thread(new Runnable() {
             @Override
             public void run() {
                 int screenTimeSeconds = 0;
-                while (true) {
+                while (isNotInterrupt.get()) {
                     try {
                         Thread.sleep(1000);
                     } catch (InterruptedException e) {
